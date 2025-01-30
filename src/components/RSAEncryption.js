@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './RSAEncryption.css';
 import logo from '../assets/logo.svg';
+import unleashService from '../services/UnleashService';
 
 // RSA Public Keys for different environments
 const PUBLIC_KEYS = {
@@ -37,13 +38,19 @@ const RSAEncryption = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showCode, setShowCode] = useState(false);
-    const [isProdUnlocked, setIsProdUnlocked] = useState(false);
+    const [unleashState, setUnleashState] = useState(unleashService.getState());
 
-    // Add keyboard shortcut handler
+    // Add keyboard handler for unlock combination
     useEffect(() => {
         const handleKeyPress = (event) => {
-            if (event.key === '-' && !isProdUnlocked) {
-                toggleProdUnlock();
+            const result = unleashService.handleKeyPress(event.key);
+            if (result) {
+                if (result.success) {
+                    setError('');
+                } else {
+                    setError(result.message);
+                }
+                setUnleashState(unleashService.getState());
             }
         };
 
@@ -51,7 +58,7 @@ const RSAEncryption = () => {
         return () => {
             window.removeEventListener('keydown', handleKeyPress);
         };
-    }, [isProdUnlocked]); // Add isProdUnlocked to dependency array
+    }, []);
 
     // Function to parse PEM format public key
     const importPublicKey = async (pem) => {
@@ -131,8 +138,8 @@ const RSAEncryption = () => {
 
     const handleEnvironmentChange = (e) => {
         const newEnv = e.target.value;
-        if (newEnv === 'prod' && !isProdUnlocked) {
-            setError('Production environment is locked. Please unlock it first.');
+        if (newEnv === 'prod' && !unleashState.isProdUnlocked) {
+            setError('Production environment is locked. Use the secret combination to unlock.');
             return;
         }
         setEnvironment(newEnv);
@@ -140,19 +147,11 @@ const RSAEncryption = () => {
     };
 
     const toggleProdUnlock = () => {
-        if (!isProdUnlocked) {
-            const confirmUnlock = window.confirm(
-                'Warning: You are about to unlock the Production environment.\nThis can be triggered using the "-" key.\nAre you sure you want to proceed?'
-            );
-            if (confirmUnlock) {
-                setIsProdUnlocked(true);
-                setError('');
-            }
-        } else {
-            setIsProdUnlocked(false);
-            if (environment === 'prod') {
-                setEnvironment('sit');
-            }
+        const result = unleashService.lockProduction();
+        setUnleashState(unleashService.getState());
+        setError(result.message);
+        if (environment === 'prod') {
+            setEnvironment('sit');
         }
     };
 
@@ -224,7 +223,11 @@ const RSAEncryption = () => {
                 <div className="form-group">
                     <div className="environment-container">
                         <label htmlFor="environment">
-                            Environment: {!isProdUnlocked && <span className="shortcut-hint">(Press "-" to unlock production)</span>}
+                            Environment: {!unleashState.isProdUnlocked && (
+                                <span className="shortcut-hint">
+                                    (Use combination to unlock production)
+                                </span>
+                            )}
                         </label>
                         <div className="environment-controls">
                             <select
@@ -236,17 +239,24 @@ const RSAEncryption = () => {
                             >
                                 <option value="sit">SIT</option>
                                 <option value="uat">UAT</option>
-                                <option value="prod" disabled={!isProdUnlocked}>PROD</option>
+                                <option value="prod" disabled={!unleashState.isProdUnlocked}>PROD</option>
                             </select>
-                            <button 
-                                type="button" 
-                                className={`unlock-btn ${isProdUnlocked ? 'unlocked' : ''}`}
-                                onClick={toggleProdUnlock}
-                                title={isProdUnlocked ? 'Lock Production' : 'Unlock Production (or press "-")'}
-                            >
-                                {isProdUnlocked ? '🔓' : '🔒'}
-                            </button>
+                            {unleashState.isProdUnlocked && (
+                                <button 
+                                    type="button" 
+                                    className="unlock-btn unlocked"
+                                    onClick={toggleProdUnlock}
+                                    title="Lock Production"
+                                >
+                                    🔓
+                                </button>
+                            )}
                         </div>
+                        {!unleashState.isProdUnlocked && !unleashState.isLocked && (
+                            <div className="unlock-hint">
+                                Attempts remaining: {unleashState.remainingAttempts}
+                            </div>
+                        )}
                     </div>
                 </div>
                 <button type="submit" disabled={isLoading}>

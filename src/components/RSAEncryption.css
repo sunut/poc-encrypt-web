@@ -170,7 +170,7 @@ button:disabled {
     padding: 15px;
     margin-top: 20px;
     border-radius: 8px;
-    animation: fadeIn 0.3s ease-out;
+    animation: shake 0.5s ease-in-out;
 }
 
 /* Code Section */
@@ -245,6 +245,18 @@ button:disabled {
     50% { opacity: 0.5; }
 }
 
+.unlock-hint {
+    font-size: 0.85em;
+    color: #856404;
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 8px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
 .unlock-btn {
     background: none;
     border: none;
@@ -260,28 +272,15 @@ button:disabled {
     position: relative;
 }
 
-.unlock-btn:not(.unlocked):hover::after {
-    content: 'Press "-"';
-    position: absolute;
-    bottom: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8em;
-    white-space: nowrap;
-    animation: fadeIn 0.3s ease-out;
-}
-
 .unlock-btn.unlocked {
     background-color: #ffeeba;
     border-color: #ffc107;
+    animation: pulse 2s infinite;
 }
 
 .unlock-btn.unlocked:hover {
     background-color: #ffe8a1;
+    border-color: #ffc107;
 }
 
 .prod-env {
@@ -312,4 +311,10 @@ button:disabled {
     .copy-btn {
         width: 100%;
     }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 } 
