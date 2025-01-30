@@ -216,6 +216,55 @@ button:disabled {
     font-size: 1.3em;
 }
 
+/* Environment Controls */
+.environment-container {
+    position: relative;
+}
+
+.environment-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.environment-controls select {
+    flex: 1;
+}
+
+.unlock-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    width: auto;
+    margin: 0;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.unlock-btn:hover {
+    transform: scale(1.1);
+    background-color: #e9ecef;
+}
+
+.unlock-btn.unlocked {
+    background-color: #ffeeba;
+    border-color: #ffc107;
+}
+
+.unlock-btn.unlocked:hover {
+    background-color: #ffe8a1;
+}
+
+.prod-env {
+    background-color: #fff3cd !important;
+    border-color: #ffc107 !important;
+    color: #856404 !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {

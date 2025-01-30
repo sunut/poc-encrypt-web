@@ -37,6 +37,7 @@ const RSAEncryption = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showCode, setShowCode] = useState(false);
+    const [isProdUnlocked, setIsProdUnlocked] = useState(false);
 
     // Function to parse PEM format public key
     const importPublicKey = async (pem) => {
@@ -114,6 +115,33 @@ const RSAEncryption = () => {
         }
     };
 
+    const handleEnvironmentChange = (e) => {
+        const newEnv = e.target.value;
+        if (newEnv === 'prod' && !isProdUnlocked) {
+            setError('Production environment is locked. Please unlock it first.');
+            return;
+        }
+        setEnvironment(newEnv);
+        setError('');
+    };
+
+    const toggleProdUnlock = () => {
+        if (!isProdUnlocked) {
+            const confirmUnlock = window.confirm(
+                'Warning: You are about to unlock the Production environment. Are you sure you want to proceed?'
+            );
+            if (confirmUnlock) {
+                setIsProdUnlocked(true);
+                setError('');
+            }
+        } else {
+            setIsProdUnlocked(false);
+            if (environment === 'prod') {
+                setEnvironment('sit');
+            }
+        }
+    };
+
     const codeExample = `
     // Function to parse PEM format public key
     const importPublicKey = async (pem) => {
@@ -180,17 +208,30 @@ const RSAEncryption = () => {
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="environment">Environment:</label>
-                    <select
-                        id="environment"
-                        value={environment}
-                        onChange={(e) => setEnvironment(e.target.value)}
-                        required
-                    >
-                        <option value="sit">SIT</option>
-                        <option value="uat">UAT</option>
-                        <option value="prod">PROD</option>
-                    </select>
+                    <div className="environment-container">
+                        <label htmlFor="environment">Environment:</label>
+                        <div className="environment-controls">
+                            <select
+                                id="environment"
+                                value={environment}
+                                onChange={handleEnvironmentChange}
+                                required
+                                className={environment === 'prod' ? 'prod-env' : ''}
+                            >
+                                <option value="sit">SIT</option>
+                                <option value="uat">UAT</option>
+                                <option value="prod" disabled={!isProdUnlocked}>PROD</option>
+                            </select>
+                            <button 
+                                type="button" 
+                                className={`unlock-btn ${isProdUnlocked ? 'unlocked' : ''}`}
+                                onClick={toggleProdUnlock}
+                                title={isProdUnlocked ? 'Lock Production' : 'Unlock Production'}
+                            >
+                                {isProdUnlocked ? '🔓' : '🔒'}
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" disabled={isLoading}>
                     {isLoading ? 'Encrypting...' : 'Encrypt'}
