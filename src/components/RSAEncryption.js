@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './RSAEncryption.css';
+import logo from '../assets/logo.svg';
 
 // RSA Public Keys for different environments
 const PUBLIC_KEYS = {
@@ -164,8 +165,9 @@ const RSAEncryption = () => {
 
     return (
         <div className="container">
+            <img src={logo} alt="MedU MORE Logo" className="logo" />
             <h1>RSA Encryption PIN (Partner-Authen) Tool</h1>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="login-form">
                 <div className="form-group">
                     <label htmlFor="plainText">Plain Text:</label>
                     <input
@@ -174,6 +176,7 @@ const RSAEncryption = () => {
                         value={plainText}
                         onChange={(e) => setPlainText(e.target.value)}
                         required
+                        placeholder="Enter your text to encrypt"
                     />
                 </div>
                 <div className="form-group">

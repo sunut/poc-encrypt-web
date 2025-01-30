@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" fill-rule="evenodd">
+        <text x="10" y="40" font-family="Arial" font-size="24" fill="#718E3C">MDCU</text>
+        <text x="10" y="70" font-family="Arial" font-size="32" font-weight="bold" fill="#718E3C">Med</text>
+        <text x="90" y="70" font-family="Arial" font-size="32" font-weight="bold" fill="#E5A4CB">U</text>
+        <text x="10" y="95" font-family="Arial" font-size="32" font-weight="bold" fill="#718E3C">MORE</text>
+        <path d="M120 50 L140 30" stroke="#E5A4CB" stroke-width="4"/>
+        <path d="M140 30 L160 50" stroke="#E5A4CB" stroke-width="4"/>
+    </g>
+</svg> 
