@@ -82,4 +82,47 @@ button:disabled {
 
 .copy-btn:hover {
     background-color: #0056b3;
+}
+
+.code-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.show-code-btn {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.show-code-btn:hover {
+    background-color: #5a6268;
+}
+
+.code-container {
+    background-color: #282c34;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.code-block {
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 0;
+}
+
+.code-container h3 {
+    color: #fff;
+    margin-top: 0;
+    margin-bottom: 15px;
 } 

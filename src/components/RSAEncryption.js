@@ -35,6 +35,7 @@ const RSAEncryption = () => {
     const [encryptedText, setEncryptedText] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showCode, setShowCode] = useState(false);
 
     // Function to parse PEM format public key
     const importPublicKey = async (pem) => {
@@ -112,6 +113,55 @@ const RSAEncryption = () => {
         }
     };
 
+    const codeExample = `
+    // Function to parse PEM format public key
+    const importPublicKey = async (pem) => {
+        const pemContents = pem
+            .replace('-----BEGIN PUBLIC KEY-----', '')
+            .replace('-----END PUBLIC KEY-----', '')
+            .replace(/\\s/g, '');
+
+        const binaryDer = window.atob(pemContents);
+        const arrayBuffer = new Uint8Array(binaryDer.length);
+        for (let i = 0; i < binaryDer.length; i++) {
+            arrayBuffer[i] = binaryDer.charCodeAt(i);
+        }
+
+        return window.crypto.subtle.importKey(
+            'spki',
+            arrayBuffer,
+            {
+                name: 'RSA-OAEP',
+                hash: { name: 'SHA-256' }
+            },
+            false,
+            ['encrypt']
+        );
+    };
+
+    // Function to encrypt data
+    const encryptData = async (publicKey, data) => {
+        const encoder = new TextEncoder();
+        const encodedData = encoder.encode(data);
+        
+        const encryptedData = await window.crypto.subtle.encrypt(
+            {
+                name: 'RSA-OAEP'
+            },
+            publicKey,
+            encodedData
+        );
+
+        return btoa(String.fromCharCode(...new Uint8Array(encryptedData)));
+    };
+
+    // Usage example:
+    const encrypt = async (text, environment) => {
+        const publicKeyPem = PUBLIC_KEYS[environment];
+        const publicKey = await importPublicKey(publicKeyPem);
+        return await encryptData(publicKey, text);
+    };`;
+
     return (
         <div className="container">
             <h1>RSA Encryption PIN (Partner-Authen) Tool</h1>
@@ -157,6 +207,23 @@ const RSAEncryption = () => {
                     </div>
                 </div>
             )}
+
+            <div className="code-section">
+                <button 
+                    className="show-code-btn"
+                    onClick={() => setShowCode(!showCode)}
+                >
+                    {showCode ? 'Hide Code' : 'Show Code for Learning'}
+                </button>
+                {showCode && (
+                    <div className="code-container">
+                        <h3>Encryption Code Example:</h3>
+                        <pre className="code-block">
+                            <code>{codeExample}</code>
+                        </pre>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
