@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './RSAEncryption.css';
 import logo from '../assets/logo.svg';
 
@@ -38,6 +38,20 @@ const RSAEncryption = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [showCode, setShowCode] = useState(false);
     const [isProdUnlocked, setIsProdUnlocked] = useState(false);
+
+    // Add keyboard shortcut handler
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            if (event.key === '-' && !isProdUnlocked) {
+                toggleProdUnlock();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [isProdUnlocked]); // Add isProdUnlocked to dependency array
 
     // Function to parse PEM format public key
     const importPublicKey = async (pem) => {
@@ -128,7 +142,7 @@ const RSAEncryption = () => {
     const toggleProdUnlock = () => {
         if (!isProdUnlocked) {
             const confirmUnlock = window.confirm(
-                'Warning: You are about to unlock the Production environment. Are you sure you want to proceed?'
+                'Warning: You are about to unlock the Production environment.\nThis can be triggered using the "-" key.\nAre you sure you want to proceed?'
             );
             if (confirmUnlock) {
                 setIsProdUnlocked(true);
@@ -209,7 +223,9 @@ const RSAEncryption = () => {
                 </div>
                 <div className="form-group">
                     <div className="environment-container">
-                        <label htmlFor="environment">Environment:</label>
+                        <label htmlFor="environment">
+                            Environment: {!isProdUnlocked && <span className="shortcut-hint">(Press "-" to unlock production)</span>}
+                        </label>
                         <div className="environment-controls">
                             <select
                                 id="environment"
@@ -226,7 +242,7 @@ const RSAEncryption = () => {
                                 type="button" 
                                 className={`unlock-btn ${isProdUnlocked ? 'unlocked' : ''}`}
                                 onClick={toggleProdUnlock}
-                                title={isProdUnlocked ? 'Lock Production' : 'Unlock Production'}
+                                title={isProdUnlocked ? 'Lock Production' : 'Unlock Production (or press "-")'}
                             >
                                 {isProdUnlocked ? '🔓' : '🔒'}
                             </button>

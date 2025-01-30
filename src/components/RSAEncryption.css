@@ -231,6 +231,20 @@ button:disabled {
     flex: 1;
 }
 
+.shortcut-hint {
+    font-size: 0.9em;
+    color: #666;
+    font-weight: normal;
+    margin-left: 8px;
+    font-style: italic;
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
 .unlock-btn {
     background: none;
     border: none;
@@ -243,11 +257,22 @@ button:disabled {
     background-color: #f8f9fa;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
+    position: relative;
 }
 
-.unlock-btn:hover {
-    transform: scale(1.1);
-    background-color: #e9ecef;
+.unlock-btn:not(.unlocked):hover::after {
+    content: 'Press "-"';
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    animation: fadeIn 0.3s ease-out;
 }
 
 .unlock-btn.unlocked {
