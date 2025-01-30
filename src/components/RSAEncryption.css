@@ -1,10 +1,11 @@
 /* Variables */
 :root {
-    --primary-green: #718E3C;
-    --primary-pink: #E5A4CB;
+    --primary-green: #2D5A27;
+    --secondary-green: #4A7A44;
+    --background-mint: #E8F5E9;
     --text-dark: #333333;
     --background-light: #ffffff;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow-color: rgba(45, 90, 39, 0.1);
 }
 
 /* Animations */
@@ -20,34 +21,41 @@
 
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    50% { transform: scale(1.02); }
     100% { transform: scale(1); }
 }
 
 /* Main Container */
+body {
+    background-color: var(--background-mint);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
 .container {
     max-width: 800px;
-    margin: 40px auto;
+    margin: 20px auto;
     padding: 40px;
     background-color: var(--background-light);
-    border-radius: 20px;
+    border-radius: 12px;
     box-shadow: 0 8px 24px var(--shadow-color);
     animation: fadeIn 0.6s ease-out;
 }
 
 /* Logo */
 .logo {
-    width: 200px;
-    margin: 0 auto 30px;
+    width: 300px;
+    margin: 0 auto 40px;
     display: block;
-    animation: pulse 2s infinite;
+    animation: pulse 3s infinite;
 }
 
 /* Headings */
 h1 {
     color: var(--primary-green);
     text-align: center;
-    font-size: 2.5em;
+    font-size: 2.2em;
     margin-bottom: 40px;
     font-weight: 600;
     animation: slideIn 0.6s ease-out;
@@ -72,7 +80,7 @@ select {
     width: 100%;
     padding: 15px;
     border: 2px solid #e0e0e0;
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 1.1em;
     transition: all 0.3s ease;
     background-color: #f8f9fa;
@@ -80,8 +88,8 @@ select {
 
 input[type="text"]:focus,
 select:focus {
-    border-color: var(--primary-pink);
-    box-shadow: 0 0 0 3px rgba(229, 164, 203, 0.2);
+    border-color: var(--secondary-green);
+    box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1);
     outline: none;
 }
 
@@ -91,7 +99,7 @@ button {
     color: white;
     padding: 15px 30px;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 1.1em;
     font-weight: 500;
     cursor: pointer;
@@ -102,7 +110,7 @@ button {
 }
 
 button:hover {
-    background-color: #5d7431;
+    background-color: var(--secondary-green);
     transform: translateY(-2px);
 }
 
@@ -116,8 +124,8 @@ button:disabled {
 .result {
     margin-top: 30px;
     padding: 20px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
+    border: 2px solid var(--secondary-green);
+    border-radius: 8px;
     background-color: #f8f9fa;
     animation: fadeIn 0.6s ease-out;
 }
@@ -144,14 +152,14 @@ button:disabled {
 }
 
 .copy-btn {
-    background-color: var(--primary-pink);
+    background-color: var(--secondary-green);
     padding: 10px 20px;
     margin: 0;
     width: auto;
 }
 
 .copy-btn:hover {
-    background-color: #d685b5;
+    background-color: var(--primary-green);
 }
 
 /* Error Message */
@@ -161,7 +169,7 @@ button:disabled {
     border: 2px solid #dc3545;
     padding: 15px;
     margin-top: 20px;
-    border-radius: 10px;
+    border-radius: 8px;
     animation: fadeIn 0.3s ease-out;
 }
 
@@ -169,24 +177,24 @@ button:disabled {
 .code-section {
     margin-top: 40px;
     padding-top: 30px;
-    border-top: 2px solid #e0e0e0;
+    border-top: 2px solid var(--secondary-green);
     animation: fadeIn 0.6s ease-out;
 }
 
 .show-code-btn {
-    background-color: var(--primary-pink);
+    background-color: var(--secondary-green);
     width: auto;
     margin: 0 auto;
 }
 
 .show-code-btn:hover {
-    background-color: #d685b5;
+    background-color: var(--primary-green);
 }
 
 .code-container {
     margin-top: 20px;
     background-color: #282c34;
-    border-radius: 15px;
+    border-radius: 8px;
     padding: 25px;
     animation: fadeIn 0.6s ease-out;
 }
@@ -211,12 +219,16 @@ button:disabled {
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
-        margin: 20px;
+        margin: 10px;
         padding: 20px;
     }
 
+    .logo {
+        width: 80%;
+    }
+
     h1 {
-        font-size: 2em;
+        font-size: 1.8em;
     }
 
     .result-container {

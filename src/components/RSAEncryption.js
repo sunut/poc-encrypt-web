@@ -165,8 +165,8 @@ const RSAEncryption = () => {
 
     return (
         <div className="container">
-            <img src={logo} alt="MedU MORE Logo" className="logo" />
-            <h1>RSA Encryption PIN (Partner-Authen) Tool</h1>
+            <img src={logo} alt="MD eConnect Logo" className="logo" />
+            <h1>RSA Encryption Tool</h1>
             <form onSubmit={handleSubmit} className="login-form">
                 <div className="form-group">
                     <label htmlFor="plainText">Plain Text:</label>

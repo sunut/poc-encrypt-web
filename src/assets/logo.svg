@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
-    <g fill="none" fill-rule="evenodd">
-        <text x="10" y="40" font-family="Arial" font-size="24" fill="#718E3C">MDCU</text>
-        <text x="10" y="70" font-family="Arial" font-size="32" font-weight="bold" fill="#718E3C">Med</text>
-        <text x="90" y="70" font-family="Arial" font-size="32" font-weight="bold" fill="#E5A4CB">U</text>
-        <text x="10" y="95" font-family="Arial" font-size="32" font-weight="bold" fill="#718E3C">MORE</text>
-        <path d="M120 50 L140 30" stroke="#E5A4CB" stroke-width="4"/>
-        <path d="M140 30 L160 50" stroke="#E5A4CB" stroke-width="4"/>
+<svg width="300" height="80" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .logo-text { font-family: Arial, sans-serif; }
+        .md-text { fill: #2D5A27; font-weight: bold; }
+        .e-text { fill: #2D5A27; }
+        .connect-text { fill: #333333; }
+    </style>
+    <g>
+        <!-- MD part -->
+        <text x="10" y="50" class="logo-text md-text" font-size="48">MD</text>
+        <!-- e part -->
+        <text x="110" y="50" class="logo-text e-text" font-size="48">e</text>
+        <!-- Connect part -->
+        <text x="140" y="50" class="logo-text connect-text" font-size="48">Connect</text>
     </g>
 </svg> 
