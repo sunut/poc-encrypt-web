@@ -1,3 +1,5 @@
+import { isFeatureEnabled, FEATURE_FLAGS } from './UnleashConfig';
+
 class UnleashService {
     constructor() {
         this.toggleState = {
@@ -21,6 +23,14 @@ class UnleashService {
 
     // Handle key sequence
     handleKeyPress(key) {
+        // Check if production environment is enabled via feature flag
+        if (!isFeatureEnabled(FEATURE_FLAGS.ENABLE_PRODUCTION)) {
+            return {
+                success: false,
+                message: 'Production environment is currently disabled by administrator.',
+            };
+        }
+
         if (this.toggleState.unlockAttempts >= this.toggleState.maxAttempts) {
             const now = Date.now();
             if (now - this.toggleState.lastAttemptTime < this.toggleState.cooldownPeriod) {
@@ -88,15 +98,24 @@ class UnleashService {
 
     // Get current state
     getState() {
+        const isFeatureFlagEnabled = isFeatureEnabled(FEATURE_FLAGS.ENABLE_PRODUCTION);
         return {
-            isProdUnlocked: this.toggleState.isProdUnlocked,
-            isLocked: this.toggleState.unlockAttempts >= this.toggleState.maxAttempts,
+            isProdUnlocked: isFeatureFlagEnabled && this.toggleState.isProdUnlocked,
+            isLocked: !isFeatureFlagEnabled || this.toggleState.unlockAttempts >= this.toggleState.maxAttempts,
             remainingAttempts: Math.max(0, this.toggleState.maxAttempts - this.toggleState.unlockAttempts),
+            isFeatureEnabled: isFeatureFlagEnabled,
         };
     }
 
     // Force lock production environment
     lockProduction() {
+        if (!isFeatureEnabled(FEATURE_FLAGS.ENABLE_PRODUCTION)) {
+            return {
+                success: false,
+                message: 'Production environment is currently disabled by administrator.',
+            };
+        }
+
         this.toggleState.isProdUnlocked = false;
         return {
             success: true,

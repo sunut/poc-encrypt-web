@@ -208,6 +208,11 @@ const RSAEncryption = () => {
         <div className="container">
             <img src={logo} alt="MD eConnect Logo" className="logo" />
             <h1>RSA Encryption Tool</h1>
+            {!unleashState.isFeatureEnabled && (
+                <div className="feature-flag-notice">
+                    Production environment access is currently disabled by administrator.
+                </div>
+            )}
             <form onSubmit={handleSubmit} className="login-form">
                 <div className="form-group">
                     <label htmlFor="plainText">Plain Text:</label>
@@ -223,7 +228,7 @@ const RSAEncryption = () => {
                 <div className="form-group">
                     <div className="environment-container">
                         <label htmlFor="environment">
-                            Environment: {!unleashState.isProdUnlocked && (
+                            Environment: {!unleashState.isProdUnlocked && unleashState.isFeatureEnabled && (
                                 <span className="shortcut-hint">
                                     (Use combination to unlock production)
                                 </span>
@@ -239,7 +244,9 @@ const RSAEncryption = () => {
                             >
                                 <option value="sit">SIT</option>
                                 <option value="uat">UAT</option>
-                                <option value="prod" disabled={!unleashState.isProdUnlocked}>PROD</option>
+                                <option value="prod" disabled={!unleashState.isProdUnlocked || !unleashState.isFeatureEnabled}>
+                                    PROD {!unleashState.isFeatureEnabled && '(Disabled)'}
+                                </option>
                             </select>
                             {unleashState.isProdUnlocked && (
                                 <button 
@@ -252,7 +259,7 @@ const RSAEncryption = () => {
                                 </button>
                             )}
                         </div>
-                        {!unleashState.isProdUnlocked && !unleashState.isLocked && (
+                        {!unleashState.isProdUnlocked && !unleashState.isLocked && unleashState.isFeatureEnabled && (
                             <div className="unlock-hint">
                                 Attempts remaining: {unleashState.remainingAttempts}
                             </div>
