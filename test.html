@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Encryption</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .copy-btn {
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RSA Encryption PIN (Partner-Authen) Tool</h1>
+        <form id="encryptForm">
+            <div class="form-group">
+                <label for="plainText">Plain Text:</label>
+                <input type="text" id="plainText" name="plainText" required>
+            </div>
+            <div class="form-group">
+                <label for="environment">Environment:</label>
+                <select id="environment" name="environment" required>
+                    <option value="sit">SIT</option>
+                    <option value="uat">UAT</option>
+                    <option value="prod">PROD</option>
+                </select>
+            </div>
+            <button type="submit" id="submitBtn">Encrypt</button>
+        </form>
+        <div id="error" class="error"></div>
+        <div id="result">
+            <h3>Encrypted Result:</h3>
+            <div style="display: flex; align-items: center;">
+                <p id="encryptedText" style="margin-right: 10px; word-break: break-all;"></p>
+                <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // RSA Public Keys for different environments
+        const PUBLIC_KEYS = {
+            sit: `-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD8nd7ePSXa7BFMk6DPOo6Ci7kf
+muB4HO0kFI32iDQVEZqU5PiKjpyCPc17dYP63uDXp9rGD/7oEmDDalJQvB7ETCeV
+NTfzi451UUIcBGbAVdUPCE06Ffkwlz3eIKIOVzQAGNulZ1tJ8IqePUU/O9C3Zrwe
+ziUpDOBdG9hzsrANPwIDAQAB
+-----END PUBLIC KEY-----`,
+            uat: `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8RAczzQghSBi1SqfXzv0
+TQ5V4obSlghFNsEYonDcuaktcz3RdJld+YMzTlMUJ011I1qNMzrN5Oq8a+JrBoCj
+no+AA+GHMIlUBmZcAyR2iBZILjklaJA4gGlJa873t++hnvqu3oZHtQEWGPOVig1h
+s41ENZvCfdBmBrCq99CB6sMXDh/dIkigYSrg6oO0TJTKrcI+ng/0Jn8T7sNENEtu
+bFBwhpzfW85ZoA86wlSlGAYuhxSmCPJQHjcPxZg1CtKsSFI8mAlC+XhlRPduNAWC
+fw4UxO8meKC70wcK05clnGbd071DXsOX872HhLgOpaAagWc3JnxdPIg4L2xVCHU+
+GwIDAQAB
+-----END PUBLIC KEY-----`,
+            prod: `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn2XDVgavpvILEgm5iHpa
+/tXFs54TsaKsZHwYbD6EfydcH7z5/hDUqVEbsiSOT2Y2vs7HSSQEtcalGrc6dRnx
+1qE8UmgN9bleUPXG8A6HPuHADnUgBKqQfOD9JZAZpNL5oEMGgvEjA7KKjE5PptV+
+r2E/Ke+by/8/+M1d2w9RX3sQRcuVn3WXYNteSE2A7rVSY1lr+8R9YHjnAzTp4nnZ
+gZRLEy45eb6ANHWx1d4Gix2gDzEBVV7/+r00YAJFr0F8usJ6I7eFSOVbxGJAEcFp
+yBEHCgAM7qnvjAAQtDhOoszkIKYbbnEm/XUxKQgTiRWA0+pALFwnKtYvzbB5Nmzn
+YQIDAQAB
+-----END PUBLIC KEY-----`
+        };
+
+        // Function to parse PEM format public key
+        async function importPublicKey(pem) {
+            // Remove header, footer and whitespace
+            const pemContents = pem
+                .replace('-----BEGIN PUBLIC KEY-----', '')
+                .replace('-----END PUBLIC KEY-----', '')
+                .replace(/\s/g, '');
+
+            // Convert base64 to binary
+            const binaryDer = window.atob(pemContents);
+            const arrayBuffer = new Uint8Array(binaryDer.length);
+            for (let i = 0; i < binaryDer.length; i++) {
+                arrayBuffer[i] = binaryDer.charCodeAt(i);
+            }
+
+            // Import the key
+            return window.crypto.subtle.importKey(
+                'spki',
+                arrayBuffer,
+                {
+                    name: 'RSA-OAEP',
+                    hash: { name: 'SHA-256' }
+                },
+                false,
+                ['encrypt']
+            );
+        }
+
+        // Function to encrypt data
+        async function encryptData(publicKey, data) {
+            const encoder = new TextEncoder();
+            const encodedData = encoder.encode(data);
+            
+            const encryptedData = await window.crypto.subtle.encrypt(
+                {
+                    name: 'RSA-OAEP'
+                },
+                publicKey,
+                encodedData
+            );
+
+            return btoa(String.fromCharCode(...new Uint8Array(encryptedData)));
+        }
+
+        async function copyToClipboard() {
+            const text = document.getElementById('encryptedText').textContent;
+            try {
+                await navigator.clipboard.writeText(text);
+                alert('Copied to clipboard!');
+            } catch (err) {
+                alert('Failed to copy text: ' + err);
+            }
+        }
+
+        const form = document.getElementById('encryptForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorDiv = document.getElementById('error');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            errorDiv.style.display = 'none';
+            resultDiv.style.display = 'none';
+
+            try {
+                const plainText = document.getElementById('plainText').value;
+                const environment = document.getElementById('environment').value;
+
+                if (!plainText) {
+                    throw new Error('Plain text cannot be empty');
+                }
+
+                const publicKeyPem = PUBLIC_KEYS[environment];
+                if (!publicKeyPem) {
+                    throw new Error('Invalid environment selected');
+                }
+
+                const publicKey = await importPublicKey(publicKeyPem);
+                const encryptedText = await encryptData(publicKey, plainText);
+
+                resultDiv.style.display = 'block';
+                document.getElementById('encryptedText').textContent = encryptedText;
+            } catch (error) {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = error.message;
+                resultDiv.style.display = 'none';
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html> 
